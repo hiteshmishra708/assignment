@@ -1,0 +1,69 @@
+<div class="container">
+	<div class="content">
+		<nav class="header">
+			<div class="row pageDes">
+				<h3>Python Assignment</h3>
+				<p>CRUD application based on Angular.Js and Django Rest Framework</p>
+			</div>
+		</nav>
+		<div class="body container">
+			<div class="row">
+				<div class="form-group">
+					<label >Artist Name:</label>
+					<input type="text" name="new_Track-artistName" class="form-control" [(ngModel)]="new_Track.artistName"/>
+				</div>
+				<div class="form-group">
+					<label>Track Name:</label>
+					<input type="text" name="new_Track-name" class="form-control" [(ngModel)]="new_Track.trackName"/>
+				</div>
+				<div class="form-group">
+					<label>Genre Name:</label>
+					<input type="text" name="new_Track-trackName" class="form-control" [(ngModel)]="new_Track.genreName"/>
+				</div>
+				<div class="form-group">
+					<label>Country:</label>
+					<input type="text" name="new_Track-country" class="form-control" [(ngModel)]="new_Track.country"/>
+				</div>
+				<div class="form-group">
+					<label>Release Date:</label>
+					<input type="text" name="new_Track-releaseDate" class="form-control" placeholder="Select Release Date" 
+					[(ngModel)]="new_Track.releaseDate" [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" bsDatepicker/>
+				</div>
+				<button (click)="createTrack()" class="btn btn-primary myButton" *ngIf="isNew">Save</button>&nbsp;
+				<button (click)="updateTrack()" class="btn btn-primary myButton" *ngIf="!isNew">Update</button>&nbsp;
+				<button (click)="clearTrack()" class="btn btn-primary">Clear</button>
+			</div>
+			<div class="row 
+			" *ngIf="Tracks && Tracks.length > 0">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Artist Name</th>
+							<th>Track Name</th>
+							<th>Genre Name</th>
+							<th>Country</th>
+							<th>Release Date</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let track of Tracks">
+							<td>{{track["artist"].artistName}}</td>
+							<td>{{track.trackName}}</td>
+							<td>{{track.genreName}}</td>
+							<td>{{track.country}}</td>
+							<td>{{track.releaseDate}}</td>
+							<td>
+								<button (click)="editTrack(track)" class="btn btn-primary">Edit</button>&nbsp;
+								<button (click)="deleteTrack(track)" class="btn btn-primary">Delete</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="footer">
+			<p>Python Assignment</p>
+		</div>
+	</div>
+</div>
