@@ -12,13 +12,23 @@
 					<label >Artist Name:</label>
 					<input type="text" name="new_Track-artistName" class="form-control" [(ngModel)]="new_Track.artistName"/>
 				</div>
+				<div class="form-group error">
+					<label *ngIf="fields['artistName'] && fields['artistName'].required">Artist Name is required.</label>
+					<label *ngIf="fields['artistName'] && fields['artistName'].length && !fields['artistName'].required">Artist Name must be at least 5 characters long.
+					</label>
+				</div>
 				<div class="form-group">
 					<label>Track Name:</label>
-					<input type="text" name="new_Track-name" class="form-control" [(ngModel)]="new_Track.trackName"/>
+					<input type="text" name="new_Track-trackName" class="form-control" [(ngModel)]="new_Track.trackName"/>
+				</div>
+				<div class="form-group error">
+					<label *ngIf="fields['trackName'] && fields['trackName'].required">Track Name is required.</label>
+					<label *ngIf="fields['trackName'] && fields['trackName'].length && !fields['trackName'].required">Track Name must be at least 5 characters long.
+					</label>
 				</div>
 				<div class="form-group">
 					<label>Genre Name:</label>
-					<input type="text" name="new_Track-trackName" class="form-control" [(ngModel)]="new_Track.genreName"/>
+					<input type="text" name="new_Track-genreName" class="form-control" [(ngModel)]="new_Track.genreName"/>
 				</div>
 				<div class="form-group">
 					<label>Country:</label>
@@ -28,6 +38,9 @@
 					<label>Release Date:</label>
 					<input type="text" name="new_Track-releaseDate" class="form-control" placeholder="Select Release Date" 
 					[(ngModel)]="new_Track.releaseDate" [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" bsDatepicker/>
+				</div>
+				<div class="form-group error">
+					<label *ngIf="fields['releaseDate'] && fields['releaseDate'].required">Release Date is required.</label>
 				</div>
 				<button (click)="createTrack()" class="btn btn-primary myButton" *ngIf="isNew">Save</button>&nbsp;
 				<button (click)="updateTrack()" class="btn btn-primary myButton" *ngIf="!isNew">Update</button>&nbsp;

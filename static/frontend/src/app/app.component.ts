@@ -19,7 +19,13 @@ export class AppComponent {
    */
   public new_Track: any;
 
+  public fields: any;
+
   public isNew: boolean;
+
+  public maxLength: any;
+
+  public validationFields: any;
 
   startDate = new Date(1990, 0, 1);
 
@@ -27,6 +33,9 @@ export class AppComponent {
 
   ngOnInit() {
     this.getTracks();
+    this.fields = {}
+    this.maxLength = 5;
+    this.validationFields = ["artistName", "trackName", "releaseDate"];
     this.new_Track = this.getTrackObject();
   }
 
@@ -50,12 +59,13 @@ export class AppComponent {
       // the third argument is a function which runs on completion
       () => console.log('done loading Tracks')
     );
-    this.isNew = true;
     this.clearTrack();
   }
 
   clearTrack() {
-	  this.new_Track = this.getTrackObject();
+    this.fields = {}
+    this.isNew = true;
+    this.new_Track = this.getTrackObject();
   }
 
   editTrack(Track) {
@@ -71,32 +81,64 @@ export class AppComponent {
     this.isNew = false;
   }
 
+  isEmptyField(value) {
+    return value == "" || value == null || value == undefined;
+  }
+
+  isValidLength(value) {
+    if(this.isEmptyField(value)) return true;
+    return value.length < this.maxLength;
+  }
+
+  checkValidations() {
+    this.validationFields.forEach(field => {
+      this.fields[field] = { required: this.isEmptyField(this.new_Track[field]), length: this.isValidLength(this.new_Track[field])}
+    });
+  }
+
+  isValidForm() {
+    this.checkValidations();
+    let isValid = true;
+    this.validationFields.forEach(field => {
+      console.log(field, this.fields[field].required || this.fields[field].length)
+      if(this.fields[field].required || this.fields[field].length) {
+          isValid = false;
+          return;
+      } 
+    });
+    return isValid;
+  }
+
   createTrack() {
-    this._TrackService.create(this.new_Track).subscribe(
-       data => {
-         // refresh the list
-         this.getTracks();
-         return true;
-       },
-       error => {
-         console.error("Error saving!");
-         return Observable.throw(error);
-       }
-    );
+    if(this.isValidForm()) {
+      this._TrackService.create(this.new_Track).subscribe(
+        data => {
+          // refresh the list
+          this.getTracks();
+          return true;
+        },
+        error => {
+          console.error("Error saving!");
+          return Observable.throw(error);
+        }
+     );
+    }
   }
 
   updateTrack() {
-    this._TrackService.update(this.new_Track).subscribe(
-       data => {
-         // refresh the list
-         this.getTracks();
-         return true;
-       },
-       error => {
-         console.error("Error saving!");
-         return Observable.throw(error);
-       }
-    );
+    if(this.isValidForm()) {
+      this._TrackService.update(this.new_Track).subscribe(
+        data => {
+          // refresh the list
+          this.getTracks();
+          return true;
+        },
+        error => {
+          console.error("Error saving!");
+          return Observable.throw(error);
+        }
+      );
+    }
   }
 
   deleteTrack(Track) {

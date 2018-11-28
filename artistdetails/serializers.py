@@ -10,7 +10,7 @@ class ArtistsSerializer(serializers.ModelSerializer):
 class TrackAddSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tracks
-        fields = ('artist_id', 'trackName', 'country', 'genreName', 'releaseDate')
+        fields = ('artist_id', 'trackName', 'releaseDate')
 
 class TracksSerializer(serializers.ModelSerializer):
     artist = ArtistsSerializer(source='artist_id')
