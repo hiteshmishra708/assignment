@@ -10,47 +10,72 @@
 			<div class="row">
 				<div class="form-group">
 					<label >Artist Name:</label>
-					<input type="text" name="new_Track-artistName" class="form-control" [(ngModel)]="new_Track.artistName"/>
+					<input type="text" name="new_Track_artistName" class="form-control" [(ngModel)]="new_Track.artistName"/>
 				</div>
-				<div class="form-group error">
+				<div class="error">
 					<label *ngIf="fields['artistName'] && fields['artistName'].required">Artist Name is required.</label>
-					<label *ngIf="fields['artistName'] && fields['artistName'].length && !fields['artistName'].required">Artist Name must be at least 5 characters long.
+					<label *ngIf="fields['artistName'] && fields['artistName'].length && !fields['artistName'].required">Artist name must be at least 5 characters long.
 					</label>
 				</div>
 				<div class="form-group">
 					<label>Track Name:</label>
-					<input type="text" name="new_Track-trackName" class="form-control" [(ngModel)]="new_Track.trackName"/>
+					<input type="text" name="new_Track_trackName" class="form-control" [(ngModel)]="new_Track.trackName"/>
 				</div>
-				<div class="form-group error">
+				<div class="error">
 					<label *ngIf="fields['trackName'] && fields['trackName'].required">Track Name is required.</label>
-					<label *ngIf="fields['trackName'] && fields['trackName'].length && !fields['trackName'].required">Track Name must be at least 5 characters long.
+					<label *ngIf="fields['trackName'] && fields['trackName'].length && !fields['trackName'].required">Track name must be at least 5 characters long.
 					</label>
 				</div>
 				<div class="form-group">
 					<label>Genre Name:</label>
-					<input type="text" name="new_Track-genreName" class="form-control" [(ngModel)]="new_Track.genreName"/>
+					<input type="text" name="new_Track_genreName" class="form-control" [(ngModel)]="new_Track.genreName"/>
 				</div>
 				<div class="form-group">
 					<label>Country:</label>
-					<input type="text" name="new_Track-country" class="form-control" [(ngModel)]="new_Track.country"/>
+					<input type="text" name="new_Track_country" class="form-control" [(ngModel)]="new_Track.country"/>
 				</div>
 				<div class="form-group">
 					<label>Release Date:</label>
-					<input type="text" name="new_Track-releaseDate" class="form-control" placeholder="Select Release Date" 
+					<input type="text" name="new_Track_releaseDate" class="form-control" placeholder="Select Release Date" 
 					[(ngModel)]="new_Track.releaseDate" [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" bsDatepicker/>
 				</div>
-				<div class="form-group error">
-					<label *ngIf="fields['releaseDate'] && fields['releaseDate'].required">Release Date is required.</label>
+				<div class="error">
+					<label *ngIf="fields['releaseDate'] && fields['releaseDate'].required">Release date is required.</label>
 				</div>
-				<button (click)="createTrack()" class="btn btn-primary myButton" *ngIf="isNew">Save</button>&nbsp;
-				<button (click)="updateTrack()" class="btn btn-primary myButton" *ngIf="!isNew">Update</button>&nbsp;
-				<button (click)="clearTrack()" class="btn btn-primary">Clear</button>
+				<div class="form-group">
+					<button (click)="createTrack()" class="btn btn-primary form-control" *ngIf="isNew">Save</button>&nbsp;
+					<button (click)="updateTrack()" class="btn btn-primary form-control" *ngIf="!isNew">Update</button>&nbsp;
+					<button (click)="clearTrack()" class="btn btn-primary">Clear</button>
+				</div>
 			</div>
-			<div class="row 
-			" *ngIf="Tracks && Tracks.length > 0">
+			<div class="row">
+				<div class="col-md-4 form-group">
+					<label>Select Artist Id:</label>
+					<select name="filter_artist_id" class="form-control" [(ngModel)]="filter.filter_artist_id">
+						<option *ngFor="let id of idList" [value]="id">{{id}}</option>
+					</select>
+					<div class="error">
+						<label *ngIf="fields['filter_artist_id'] && fields['filter_artist_id'].required">Artist Id is required.</label>
+					</div>
+				</div>
+				<div class="col-md-4 form-group">
+					<label>Select Date:</label>
+					<input type="text" name="filter_releaseDate" class="form-control" placeholder="Select Date" 
+					[(ngModel)]="filter.filter_releaseDate" [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" bsDatepicker/>
+					<div class="error">
+						<label *ngIf="fields['filter_releaseDate'] && fields['filter_releaseDate'].required">Release date is required.</label>
+					</div>
+				</div>
+				<div class="col-md-4 form-group">
+					<label></label>
+					<button (click)="filterTrack()" class="btn btn-primary filterButton">Filter Records</button>
+				</div>
+			</div>
+			<div class="row" *ngIf="Tracks && Tracks.length > 0">
 				<table class="table">
 					<thead>
 						<tr>
+							<th>Artist Id</th>
 							<th>Artist Name</th>
 							<th>Track Name</th>
 							<th>Genre Name</th>
@@ -61,6 +86,7 @@
 					</thead>
 					<tbody>
 						<tr *ngFor="let track of Tracks">
+							<td>{{track["artist"].artistId}}</td>
 							<td>{{track["artist"].artistName}}</td>
 							<td>{{track.trackName}}</td>
 							<td>{{track.genreName}}</td>

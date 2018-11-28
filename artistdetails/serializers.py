@@ -7,6 +7,11 @@ class ArtistsSerializer(serializers.ModelSerializer):
         model = Artists
         fields = ('artistId', 'artistName')
 
+class TracksFilterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tracks
+        fields = ('artist_id', 'releaseDate')
+
 class TrackAddSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tracks

@@ -75,6 +75,10 @@ nav {
     margin-left: 35%;
 }
 
+.form-group button {
+    width: 150px;
+}
+
 .pageDes {
     text-align: center;
 }
@@ -88,5 +92,10 @@ nav {
 }
 
 .error label {
-    
+    color: red;
+    margin-left: 35%;
+}
+
+.filterButton {
+    margin-top: 25px;
 }

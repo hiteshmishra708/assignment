@@ -5,7 +5,7 @@ from .models import Artists, Tracks
 from . import serializers
 from rest_framework.decorators import api_view
 from datetime import datetime
-
+from django.db.models import Q
 
 def index(request, path=''):
     """
@@ -16,7 +16,7 @@ def index(request, path=''):
 @api_view(['GET', 'POST'])
 def TrackList(request):
     """
-    List all artists, or create a new snippet.
+    List all tracks, or create a new snippet.
     """
     if request.method == 'GET':
         tracks = Tracks.objects.all()
@@ -32,7 +32,7 @@ def TrackList(request):
             try:
                 request.data["releaseDate"] = datetime.strptime(request.data["releaseDate"], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d")
             except:
-                print("date format not matched!")
+                print("date is formated")
             if serializer.is_valid():
                 serializer.save()
                 response = {
@@ -46,11 +46,41 @@ def TrackList(request):
                 "response": "FAIL"
             }
             return Response(response)
- 
+
+@api_view(['POST'])
+def filter(request):
+    """
+    Filter all tracks or artist id or release date.
+    """
+    try:
+        try:
+            request.data["releaseDate"] = datetime.strptime(request.data["releaseDate"], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d")
+        except:
+            print("date is formated")
+        tracks = Tracks.objects.filter(Q(artist_id=request.data["artist_id"]) & Q(releaseDate__range=["1990-01-01", request.data["releaseDate"]]))
+        serializer = serializers.TracksSerializer(tracks, many=True)
+        msg = None
+        if len(serializer.data) > 0:
+            msg = "Tracks found"
+        else:
+            msg = "Tracks not found"
+        response = {
+                "response": "SUCCESS",
+                "message": msg,
+                "records": serializer.data,
+            }
+        return Response(response)
+    except:
+        response = {
+            "response": "FAIL"
+        }
+        return Response(response)
+
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def TrackDetail(request, pk):
     """
-    Retrieve, update or delete a artists instance.
+    Retrieve, update or delete a tracks instance.
     """
     try:
         track = Tracks.objects.get(pk=pk)
@@ -76,7 +106,7 @@ def TrackDetail(request, pk):
             try:
                 request.data["releaseDate"] = datetime.strptime(request.data["releaseDate"], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d")
             except:
-                print("date format not matched!")
+                print("date is formated")
             if serializer.is_valid():
                 serializer.save()
             serializer = serializers.TrackAddSerializer(track, data=request.data)

@@ -3,157 +3,244 @@ import {TrackService} from './track.service';
 import {Observable} from 'rxjs/Rx';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+	selector: 'app-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.css']
 })
 export class AppComponent {
 
-  /**
-   * An array of all the Track objects from the API
-   */
-  public Tracks;
+	/**
+	 * An array of all the Track objects from the API
+	 */
+	public Tracks;
 
-  /**
-   * An object representing the data in the "add" form
-   */
-  public new_Track: any;
+	/**
+	 * An object representing the data in the "add" form
+	 */
+	public new_Track: any;
 
-  public fields: any;
+	public fields: any;
 
-  public isNew: boolean;
+	public filter: any;
 
-  public maxLength: any;
+	public isNew: boolean;
 
-  public validationFields: any;
+	public maxLength: any;
 
-  startDate = new Date(1990, 0, 1);
+	public filterFields: any;
 
-  constructor(private _TrackService : TrackService) { }
+	public validationFields: any;
 
-  ngOnInit() {
-    this.getTracks();
-    this.fields = {}
-    this.maxLength = 5;
-    this.validationFields = ["artistName", "trackName", "releaseDate"];
-    this.new_Track = this.getTrackObject();
-  }
+	public data: any;
 
-  getTrackObject() {
-    var obj = {
-      "artistName": "",
-      "trackName": "",
-      "genreName": "",
-      "country": "",
-      "releaseDate": "",
-    }
-    return obj;
-  }
+	public idList: any;
 
-  getTracks() {
-    this._TrackService.list().subscribe(
-      // the first argument is a function which runs on success
-      data => { this.Tracks = data; console.log(this.Tracks)},
-      // the second argument is a function which runs on error
-      err => console.error(err),
-      // the third argument is a function which runs on completion
-      () => console.log('done loading Tracks')
-    );
-    this.clearTrack();
-  }
+	startDate = new Date(1990, 0, 1);
 
-  clearTrack() {
-    this.fields = {}
-    this.isNew = true;
-    this.new_Track = this.getTrackObject();
-  }
+	constructor(private _TrackService : TrackService) { }
 
-  editTrack(Track) {
-    this.new_Track = {
-      "artistName": Track["artist"].artistName,
-      "artist_id": Track["artist"].artistId,
-      "trackName": Track["trackName"],
-      "genreName": Track["genreName"],
-      "country": Track["country"],
-      "releaseDate": Track["releaseDate"],
-      "trackId": Track["trackId"]
-    }
-    this.isNew = false;
-  }
+	ngOnInit() {
+		this.idList = [];
+		this.getTracks();
+		this.maxLength = 5;
+		this.filterFields = ["filter_artist_id", "filter_releaseDate"];
+		this.validationFields = ["artistName", "trackName", "releaseDate"];
+		this.filter = this.getFilterObject();
+		this.new_Track = this.getTrackObject();
+	}
 
-  isEmptyField(value) {
-    return value == "" || value == null || value == undefined;
-  }
+	getFilterObject() {
+		var obj = {
+		"artist_id": null,
+		"releaseDate": "",
+		}
+		return obj;
+	}
 
-  isValidLength(value) {
-    if(this.isEmptyField(value)) return true;
-    return value.length < this.maxLength;
-  }
+	getTrackObject() {
+		var obj = {
+		"artistName": "",
+		"trackName": "",
+		"genreName": "",
+		"country": "",
+		"releaseDate": "",
+		}
+		return obj;
+	}
 
-  checkValidations() {
-    this.validationFields.forEach(field => {
-      this.fields[field] = { required: this.isEmptyField(this.new_Track[field]), length: this.isValidLength(this.new_Track[field])}
-    });
-  }
+	getTracks() {
+		this._TrackService.list().subscribe(
+			// the first argument is a function which runs on success
+			data => {
+				this.Tracks = data;
+				this.Tracks.forEach(element => {
+					if(this.idList.indexOf(element["artist"].artistId) == -1) {
+					this.idList.push(element["artist"].artistId);
+					}
+				});
+				console.log(this.Tracks)
+			},
+			// the second argument is a function which runs on error
+			err => console.error(err),
+			// the third argument is a function which runs on completion
+			() => console.log('done loading Tracks')
+		);
+		this.clearTrack();
+	}
 
-  isValidForm() {
-    this.checkValidations();
-    let isValid = true;
-    this.validationFields.forEach(field => {
-      console.log(field, this.fields[field].required || this.fields[field].length)
-      if(this.fields[field].required || this.fields[field].length) {
-          isValid = false;
-          return;
-      } 
-    });
-    return isValid;
-  }
+	clearTrack() {
+		this.idList = [];
+		this.fields = {};
+		this.isNew = true;
+		// this.filter = this.getFilterObject();
+		this.new_Track = this.getTrackObject();
+	}
 
-  createTrack() {
-    if(this.isValidForm()) {
-      this._TrackService.create(this.new_Track).subscribe(
-        data => {
-          // refresh the list
-          this.getTracks();
-          return true;
-        },
-        error => {
-          console.error("Error saving!");
-          return Observable.throw(error);
-        }
-     );
-    }
-  }
+	editTrack(Track) {
+		this.new_Track = {
+			"artistName": Track["artist"].artistName,
+			"artist_id": Track["artist"].artistId,
+			"trackName": Track["trackName"],
+			"genreName": Track["genreName"],
+			"country": Track["country"],
+			"releaseDate": Track["releaseDate"],
+			"trackId": Track["trackId"]
+		}
+		this.isNew = false;
+	}
 
-  updateTrack() {
-    if(this.isValidForm()) {
-      this._TrackService.update(this.new_Track).subscribe(
-        data => {
-          // refresh the list
-          this.getTracks();
-          return true;
-        },
-        error => {
-          console.error("Error saving!");
-          return Observable.throw(error);
-        }
-      );
-    }
-  }
+	isEmptyField(value) {
+		return value == "" || value == null || value == undefined;
+	}
 
-  deleteTrack(Track) {
-    if (confirm("Are you sure you want to delete " + Track.trackName + "?")) {
-      this._TrackService.delete(Track).subscribe(
-         data => {
-           // refresh the list
-           this.getTracks();
-           return true;
-         },
-         error => {
-           console.error("Error deleting!");
-           return Observable.throw(error);
-         }
-      );
-    }
-  }
-}
+	isValidLength(value) {
+		if(this.isEmptyField(value)) return true;
+		return value.length < this.maxLength;
+	}
+
+	checkValidations(type="form") {
+		switch(type) {
+		case "form":
+			this.validationFields.forEach(field => {
+			this.fields[field] = { required: this.isEmptyField(this.new_Track[field]), length: this.isValidLength(this.new_Track[field])}
+			});
+			break;
+		case "filter":
+			this.filterFields.forEach(field => {
+			this.fields[field] = { required: this.isEmptyField(this.filter[field])}
+			});
+			break;
+		}
+	}
+
+	isValidForm(type="form") {
+		this.checkValidations(type);
+		let isValid = true;
+		switch(type) {
+			case "form":
+				this.validationFields.forEach(field => {
+					if(this.fields[field].required || this.fields[field].length) {
+						isValid = false;
+						return;
+					} 
+				});
+			break;
+			case "filter":
+				this.filterFields.forEach(field => {
+					if(this.fields[field].required) {
+						isValid = false;
+						return;
+					} 
+				});
+			break;
+		}
+		return isValid;
+	}
+
+	createTrack() {
+		if(this.isValidForm()) {
+			this._TrackService.create(this.new_Track).subscribe(
+				data => {
+					let res: any;
+					res = data;
+					if(res.message) {
+						alert(res.message);
+					}
+					// refresh the list
+					this.getTracks();
+					return true;
+				},
+				error => {
+					console.error("Error saving!");
+					return Observable.throw(error);
+				}
+			);
+		}
+	}
+
+	updateTrack() {
+		if(this.isValidForm()) {
+			this._TrackService.update(this.new_Track).subscribe(
+				data => {
+					let res: any;
+					res = data;
+					if(res.message) {
+						alert(res.message);
+					}
+					// refresh the list
+					this.getTracks();
+					return true;
+				},
+				error => {
+					console.error("Error saving!");
+					return Observable.throw(error);
+				}
+			);
+		}
+	}
+
+	deleteTrack(Track) {
+		if (confirm("Are you sure you want to delete " + Track.trackName + "?")) {
+			this._TrackService.delete(Track).subscribe(
+				data => {
+					let res: any;
+					res = data;
+					if(res.message) {
+						alert(res.message);
+					}
+					// refresh the list
+					this.getTracks();
+					return true;
+				},
+				error => {
+					console.error("Error deleting!");
+					return Observable.throw(error);
+				}
+			);
+		}
+	}
+
+	filterTrack() {
+		if(this.isValidForm("filter")) {
+			this._TrackService.filter(
+				{"artist_id": this.filter["filter_artist_id"],
+				"releaseDate": this.filter["filter_releaseDate"]
+				}).subscribe(
+				// the first argument is a function which runs on success
+					data => {
+						this.data = data;
+						if(this.data.records && this.data.records.length > 0) {
+							this.Tracks = this.data.records;
+						} else {
+							alert(this.data.message);
+						}
+						console.log(this.Tracks)
+					},
+					// the second argument is a function which runs on error
+					err => console.error(err),
+					// the third argument is a function which runs on completion
+					() => console.log('done filtering Tracks')
+				);
+			}
+		}
+	}

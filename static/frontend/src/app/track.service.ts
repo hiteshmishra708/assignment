@@ -35,6 +35,12 @@ export class TrackService {
         return this.http.post('tracks/', body, this.httpOptions);
     }
 
+    // send a POST request to the API to filter the data objects
+    filter(track) {
+        let body = JSON.stringify(track);
+        return this.http.post('filter/', body, this.httpOptions);
+    }
+
     // send a PUT request to the API to update a data object
     update(track) {
         let body = JSON.stringify(track);
