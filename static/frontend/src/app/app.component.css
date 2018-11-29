@@ -48,10 +48,14 @@ nav {
     padding: 50px;
 }
 
+.table {
+    padding: 20px;
+}
+
 .table tbody {
     display: block;
     height: 375px;
-    min-width: 1000px;
+    min-width: 600px;
     overflow: auto;
 }
 
@@ -63,7 +67,7 @@ nav {
 }
 
 .table th, .table td {
-    min-width: 150px;
+    min-width: 120px;
 }
 
 .form-control {

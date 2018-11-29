@@ -2,7 +2,7 @@
 
 ## Angular 6 / Django Rest Framework 
 
-CRUD application based on Angular.Js and Django Rest Framework.
+CRUD application based on Angular 6 and Django Rest Framework.
 
 ## What this repo contains
 
@@ -36,10 +36,15 @@ cd static/ng-demo
 npm install
 npm run-script build
 cd ../..
+python manage.py makemigrations
+python manage.py migrate
 python manage.py runserver
 ```
 
 Windows:
+
+Open a terminal at the repo root, and run the following:
+
 pip install virtualenv
 virtualenv venv
 venv/Scripts/activate

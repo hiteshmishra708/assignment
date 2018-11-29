@@ -96,6 +96,10 @@ export class AppComponent {
 		this.new_Track = this.getTrackObject();
 	}
 
+	clearFilter() {
+		this.filter = this.getFilterObject();
+	}
+
 	editTrack(Track) {
 		this.new_Track = {
 			"artistName": Track["artist"].artistName,
@@ -229,12 +233,10 @@ export class AppComponent {
 				// the first argument is a function which runs on success
 					data => {
 						this.data = data;
+						alert(this.data.message);
 						if(this.data.records && this.data.records.length > 0) {
 							this.Tracks = this.data.records;
-						} else {
-							alert(this.data.message);
 						}
-						console.log(this.Tracks)
 					},
 					// the second argument is a function which runs on error
 					err => console.error(err),
