@@ -98,6 +98,7 @@ export class AppComponent {
 
 	clearFilter() {
 		this.filter = this.getFilterObject();
+		this.getTracks();
 	}
 
 	editTrack(Track) {
